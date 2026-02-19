@@ -8,9 +8,12 @@ app.use(express.json());
 app.use(cors());
 
 mongoose.connect(
-  "YOUR_MONGODB_CONNECTION_STRING"
-).then(() => console.log("MongoDB Connected"));
+  "mongodb+srv://netflixUser:StrongPassword123@cluster0.1gn5ulz.mongodb.net/netflixDB?retryWrites=true&w=majority"
+)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log("Mongo Error:", err));
 
+// Schema
 const UserSchema = new mongoose.Schema({
   name: String,
   phone: String,
@@ -28,7 +31,6 @@ app.post("/signup", async (req, res) => {
   if (existing) return res.status(400).json({ message: "User already exists" });
 
   const hashed = await bcrypt.hash(password, 10);
-
   await User.create({ name, phone, email, password: hashed });
 
   res.json({ message: "Signup successful" });
@@ -47,4 +49,6 @@ app.post("/login", async (req, res) => {
   res.json({ message: "Login success" });
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+// ✅ Correct PORT for Render
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log("Server running on port " + PORT));
